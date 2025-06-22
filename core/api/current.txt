@@ -29994,13 +29994,29 @@ package android.net.rtp {
 
   @Deprecated public class AudioStream extends android.net.rtp.RtpStream {
     ctor @Deprecated public AudioStream(java.net.InetAddress) throws java.net.SocketException;
+    method @Deprecated @Nullable public String getCipher();
     method @Deprecated public android.net.rtp.AudioCodec getCodec();
     method @Deprecated public int getDtmfType();
     method @Deprecated public android.net.rtp.AudioGroup getGroup();
+    method @Deprecated @Nullable public byte[] getLocalKey();
+    method @Deprecated @Nullable public byte[] getRemoteKey();
     method @Deprecated public final boolean isBusy();
     method @Deprecated public void join(android.net.rtp.AudioGroup);
+    method @Deprecated public void setCipher(@Nullable String);
     method @Deprecated public void setCodec(android.net.rtp.AudioCodec);
     method @Deprecated public void setDtmfType(int);
+    method @Deprecated public void setLocalKey(@Nullable byte[]);
+    method @Deprecated public void setRemoteKey(@Nullable byte[]);
+  }
+
+  public class Crypto {
+    ctor public Crypto(int, @NonNull String);
+    method @NonNull public String getCipher();
+    method @NonNull public static java.util.List<android.net.rtp.Crypto> getCryptos();
+    method @NonNull public byte[] getKey();
+    method @NonNull public String getRest();
+    method public int getTag();
+    method public boolean valid();
   }
 
   @Deprecated public class RtpStream {
@@ -30065,11 +30081,13 @@ package android.net.sip {
     field @Deprecated public static final int CLIENT_ERROR = -4; // 0xfffffffc
     field @Deprecated public static final int CROSS_DOMAIN_AUTHENTICATION = -11; // 0xfffffff5
     field @Deprecated public static final int DATA_CONNECTION_LOST = -10; // 0xfffffff6
+    field @Deprecated public static final int EXCEPTION = -14; // 0xfffffff2
     field @Deprecated public static final int INVALID_CREDENTIALS = -8; // 0xfffffff8
     field @Deprecated public static final int INVALID_REMOTE_URI = -6; // 0xfffffffa
     field @Deprecated public static final int IN_PROGRESS = -9; // 0xfffffff7
     field @Deprecated public static final int NO_ERROR = 0; // 0x0
     field @Deprecated public static final int PEER_NOT_REACHABLE = -7; // 0xfffffff9
+    field @Deprecated public static final int RESTART = -13; // 0xfffffff3
     field @Deprecated public static final int SERVER_ERROR = -2; // 0xfffffffe
     field @Deprecated public static final int SERVER_UNREACHABLE = -12; // 0xfffffff4
     field @Deprecated public static final int SOCKET_ERROR = -1; // 0xffffffff
@@ -30114,15 +30132,18 @@ package android.net.sip {
     method @Deprecated public String getAuthUserName();
     method @Deprecated public boolean getAutoRegistration();
     method @Deprecated public String getDisplayName();
+    method @Deprecated public boolean getOutgoingPhoneAccount();
     method @Deprecated public String getPassword();
     method @Deprecated public int getPort();
     method @Deprecated public String getProfileName();
     method @Deprecated public String getProtocol();
     method @Deprecated public String getProxyAddress();
+    method @Deprecated public int getRegistrationTimeout();
     method @Deprecated public boolean getSendKeepAlive();
     method @Deprecated public String getSipDomain();
     method @Deprecated public String getUriString();
     method @Deprecated public String getUserName();
+    method @Deprecated public boolean isSecure();
     method @Deprecated public void setCallingUid(int);
     method @Deprecated public void writeToParcel(android.os.Parcel, int);
     field @Deprecated public static final android.os.Parcelable.Creator<android.net.sip.SipProfile> CREATOR;
