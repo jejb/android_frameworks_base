@@ -1399,9 +1399,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         if (mLockPatternUtils.isUser2FA(userId)) {
             return false;
         }
-        return (mDevicePolicyManager.getKeyguardDisabledFeatures(null, userId)
-                        & DevicePolicyManager.KEYGUARD_DISABLE_FINGERPRINT) != 0
-                || isSimPinSecure();
+	return true;
     }
 
     /**
