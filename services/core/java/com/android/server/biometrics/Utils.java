@@ -550,6 +550,10 @@ public class Utils {
     }
 
     public static boolean isUserEncryptedOrLockdown(@NonNull LockPatternUtils lpu, int user) {
+        if (lpu.isUser2FA(user)) {
+            Slog.d(TAG, "isUserEncryptedOrLockdown returning false due to 2FA");
+            return false;
+        }
         final int strongAuth = lpu.getStrongAuthForUser(user);
         final boolean isEncrypted = containsFlag(strongAuth, STRONG_AUTH_REQUIRED_AFTER_BOOT);
         final boolean isLockDown = containsFlag(strongAuth, STRONG_AUTH_REQUIRED_AFTER_DPM_LOCK_NOW)

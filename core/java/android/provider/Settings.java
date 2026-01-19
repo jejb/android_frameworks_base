@@ -8530,6 +8530,12 @@ public final class Settings {
         public static final String LOCK_PATTERN_SIZE = "lock_pattern_size";
 
         /**
+         * Determines whether two factor authentication is required
+         * @hide
+         */
+        public static final String USER_2FA = "user_2fa";
+
+        /**
          * Whether lock pattern will show dots (0 = false, 1 = true)
          * @hide
          */

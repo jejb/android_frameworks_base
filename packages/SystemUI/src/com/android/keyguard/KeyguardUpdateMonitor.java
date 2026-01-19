@@ -887,6 +887,11 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         Trace.beginSection("KeyGuardUpdateMonitor#onFingerPrintAuthenticated");
         mUserFingerprintAuthenticated.put(userId,
                 new BiometricAuthenticated(true, isStrongBiometric));
+        if (mLockPatternUtils.isUser2FA(userId)) {
+            Log.d(TAG, "2FA swapping authenticate for detect");
+            onBiometricDetected(userId, FINGERPRINT, isStrongBiometric);
+            return;
+        }
         // Update/refresh trust state only if user can skip bouncer
         if (getUserCanSkipBouncer(userId)) {
             mTrustManager.unlockedByBiometricForUser(userId, FINGERPRINT);
@@ -1391,6 +1396,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     }
 
     private boolean isFingerprintDisabled(int userId) {
+        if (mLockPatternUtils.isUser2FA(userId)) {
+            return false;
+        }
         return (mDevicePolicyManager.getKeyguardDisabledFeatures(null, userId)
                         & DevicePolicyManager.KEYGUARD_DISABLE_FINGERPRINT) != 0
                 || isSimPinSecure();
@@ -1433,6 +1441,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
      */
     public boolean getUserUnlockedWithBiometric(int userId) {
         BiometricAuthenticated fingerprint = mUserFingerprintAuthenticated.get(userId);
+	if (mLockPatternUtils.isUser2FA(userId) && fingerprint != null) {
+            return true;
+        }
         boolean fingerprintAllowed = fingerprint != null && fingerprint.mAuthenticated
                 && isUnlockingWithBiometricAllowed(fingerprint.mIsStrongBiometric);
         boolean unlockedByFace = isCurrentUserUnlockedWithFace() && isUnlockingWithBiometricAllowed(
@@ -2653,11 +2664,12 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
             mLogger.d("All FP authenticators not registered, skipping FP listening state update");
             return;
         }
-        final boolean shouldListenForFingerprint = shouldListenForFingerprint(isUdfpsSupported());
+        final int user = mSelectedUserInteractor.getSelectedUserId();
+        final boolean shouldListenForFingerprint = mLockPatternUtils.isUser2FA(user) || shouldListenForFingerprint(isUdfpsSupported());
         final boolean running = mFingerprintRunningState == BIOMETRIC_STATE_RUNNING;
         final boolean runningOrRestarting = running
                 || mFingerprintRunningState == BIOMETRIC_STATE_CANCELLING_RESTARTING;
-        final boolean runDetect = !isUnlockingWithFingerprintAllowed();
+        final boolean runDetect = !mLockPatternUtils.isUser2FA(user) && !isUnlockingWithFingerprintAllowed();
 
         if (runningOrRestarting && !shouldListenForFingerprint) {
             if (action == BIOMETRIC_ACTION_START) {

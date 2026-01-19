@@ -2090,4 +2090,23 @@ public class LockPatternUtils {
             throw e.rethrowFromSystemServer();
         }
     }
+
+    /**
+     * Checks if user is asking for 2 factor authentication
+     * (i.e. fingerprint and pattern/password/pin)
+     *
+     * Note: nothing in the frameworks_base checks the availability of
+     * enrolled fingerprints, so the fingerprint settings must set
+     * this to false if all enrolled fingerprints are deleted.
+     */
+    public boolean isUser2FA(int userId) {
+        return getBoolean(Settings.Secure.USER_2FA, false, userId);
+    }
+    /**
+     * Stores the value of the 2FA setting. For use by the fingerprint
+     * settings.
+     */
+    public void setUser2FA(int userId, boolean enabled) {
+        setBoolean(Settings.Secure.USER_2FA, enabled, userId);
+    }
 }
