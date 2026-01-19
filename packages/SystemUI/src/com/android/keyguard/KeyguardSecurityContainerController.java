@@ -848,7 +848,7 @@ public class KeyguardSecurityContainerController extends ViewController<Keyguard
             finish = true;
             eventSubtype = BOUNCER_DISMISS_EXTENDED_ACCESS;
             uiEvent = BouncerUiEvent.BOUNCER_DISMISS_EXTENDED_ACCESS;
-        } else if (mUpdateMonitor.getUserUnlockedWithBiometric(targetUserId)) {
+        } else if (!mLockPatternUtils.isUser2FA(targetUserId) && mUpdateMonitor.getUserUnlockedWithBiometric(targetUserId)) {
             finish = true;
             eventSubtype = BOUNCER_DISMISS_BIOMETRIC;
             uiEvent = BouncerUiEvent.BOUNCER_DISMISS_BIOMETRIC;
@@ -895,6 +895,17 @@ public class KeyguardSecurityContainerController extends ViewController<Keyguard
                             + ", fail safe");
                     showPrimarySecurityScreen(false);
                     break;
+            }
+            if (mLockPatternUtils.isUser2FA(targetUserId)) {
+                if (finish && !mUpdateMonitor.getUserUnlockedWithBiometric(targetUserId)) {
+                    Log.i(TAG, "2FA attempted unlock without fingerprint, userId  = " + targetUserId);
+                    finish = false;
+                    eventSubtype = -1;
+                    uiEvent = BouncerUiEvent.UNKNOWN;
+                    mKeyguardSecurityCallback.reset();
+                } else if (finish) {
+                    Log.i(TAG, "2FA unlock successful, userID = " + targetUserId);
+                }
             }
         }
         // A check to dismiss was made without any authentication. Verify there are no remaining SIM
